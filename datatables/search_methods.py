@@ -31,6 +31,16 @@ def parse_query_value(combined_value):
     return operator_func, value
 
 
+def integer_numeric_query(expr, value):
+    operator_func, value = parse_query_value(value)
+    if value == '':
+        num_value = 0
+    else:
+        num_value = int(value)
+
+    return operator_func(expr, num_value)
+
+
 def numeric_query(expr, value):
     operator_func, value = parse_query_value(value)
     if value == '':
@@ -39,6 +49,13 @@ def numeric_query(expr, value):
         num_value = float(value)
 
     return operator_func(expr, num_value)
+
+
+def boolean_query(expr, value):
+    operator_func, value = parse_query_value(value)
+    if value:
+        num_value = bool(int(value))
+        return operator_func(expr, num_value)
 
 
 def date_query(expr, value):
@@ -79,6 +96,8 @@ SEARCH_METHODS = {
     'ilike': lambda expr, value: expr.ilike(value),
     'like': lambda expr, value: expr.like(value),
     'numeric': numeric_query,
+    'boolean': boolean_query,
+    'integer': integer_numeric_query,
     'date': date_query,
     'yadcf_text': lambda expr, value: expr.ilike('%' + value + '%'),
     'yadcf_autocomplete': lambda expr, value: expr == value,
