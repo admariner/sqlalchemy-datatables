@@ -2,7 +2,7 @@ import datetime
 import logging
 
 from dateutil.parser import parse as date_parse
-from sqlalchemy import Text
+from sqlalchemy import Text, any_, all_
 
 logger = logging.getLogger(__name__)
 
@@ -85,9 +85,9 @@ def yadcf_range_date(expr, value):
 
 
 def yadcf_multi_select(expr, value):
-    options = value.split('|')
+    options = map(lambda x: "%" + x + "%", value.split('|'))
     logger.debug('yadcf_multi_select: in %s', options)
-    return expr.cast(Text).in_(options)
+    return expr.cast(Text).ilike(all_(options))
 
 
 SEARCH_METHODS = {
